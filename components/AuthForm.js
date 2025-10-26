@@ -11,12 +11,26 @@ export default function AuthForm() {
   const [error, setError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
 
+  // Simple email validation regex (can be more robust if needed)
+  const isValidEmail = (emailString) => {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailString);
+  };
+
   const handleSignUp = async (e) => {
     e.preventDefault();
     setError('');
     setAuthLoading(true);
+
+    const trimmedEmail = email.trim(); // Trim whitespace
+
+    if (!isValidEmail(trimmedEmail)) { // Client-side validation
+      setError("Please enter a valid email address.");
+      setAuthLoading(false);
+      return;
+    }
+
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword(auth, trimmedEmail, password);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -28,8 +42,17 @@ export default function AuthForm() {
     e.preventDefault();
     setError('');
     setAuthLoading(true);
+
+    const trimmedEmail = email.trim(); // Trim whitespace
+
+    if (!isValidEmail(trimmedEmail)) { // Client-side validation
+      setError("Please enter a valid email address.");
+      setAuthLoading(false);
+      return;
+    }
+
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, trimmedEmail, password);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -85,3 +108,4 @@ export default function AuthForm() {
     </div>
   );
 }
+
